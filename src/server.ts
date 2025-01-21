@@ -1,6 +1,7 @@
 import morgan from 'morgan';
 import express from 'express';
 import { ConfigServer } from './config/config';
+import { ErrorMiddleware } from './shared/middleware/error.middleware';
 
 class ServerBootstrap extends ConfigServer {
   public app: express.Application = express();
@@ -13,6 +14,7 @@ class ServerBootstrap extends ConfigServer {
     this.app.use(morgan('dev'));
 
     this.app.use('/api', this.routers());
+    this.app.use(ErrorMiddleware.error);
     this.listen();
   }
 
