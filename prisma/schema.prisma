@@ -1,0 +1,59 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  accountnumber Int      @unique @default(autoincrement())
+  orders        Order[]
+
+  @@map("users")
+}
+
+model Instrument {
+  id       Int      @id @default(autoincrement())
+  ticker   String   @unique
+  name     String
+  type     String
+  orders   Order[]
+  marketData MarketData[]
+
+  @@map("instruments")
+}
+
+model Order {
+  id         Int      @id @default(autoincrement())
+  instrument Instrument @relation(fields: [instrumentid], references: [id])
+  instrumentid Int
+  user       User     @relation(fields: [userid], references: [id])
+  userid     Int
+  side       String
+  size       Int
+  price      Float
+  type       String
+  status     String
+  date   DateTime @default(now())
+
+  @@map("orders")
+}
+
+model MarketData {
+  id                    Int      @id @default(autoincrement())
+  instrument            Instrument @relation(fields: [instrumentid], references: [id])
+  instrumentid          Int
+  high                  Float
+  low                   Float
+  open                  Float
+  close                 Float
+  previousclose         Float
+  date                  DateTime @default(now())
+
+  @@map("marketdata")
+}
