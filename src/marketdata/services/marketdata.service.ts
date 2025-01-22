@@ -1,6 +1,6 @@
 import { BaseService } from '../../config/base.service';
-import { CreateMarketDataDTO } from '../dto/createMarketData.dto';
 import { MarketData } from '../entities/marketdata.entity';
+import { CreateMarketDataDTO } from '../dto/createMarketData.dto';
 import {
   IMarketDataRepository,
   IMarketDataService,
@@ -14,13 +14,22 @@ export class MarketDataService
     super(repository);
   }
 
-  findAll(query?: { [key: string]: unknown }): Promise<MarketData[] | null> {
-    throw new Error('Method not implemented.');
+  findAll(query?: { [key: string]: unknown }) {
+    return this.repository.find(query) as Promise<MarketData[] | null>;
   }
-  findOne(id: MarketData['id']): Promise<MarketData | null> {
-    throw new Error('Method not implemented.');
+
+  async findOne(id: MarketData['id']): Promise<MarketData | null> {
+    return this.repository.findOne(id) as Promise<MarketData> | null;
   }
-  create(order: CreateMarketDataDTO): Promise<MarketData | null> {
-    throw new Error('Method not implemented.');
+
+  async create(orderData: CreateMarketDataDTO): Promise<MarketData | null> {
+    throw new Error('Not implemented');
+  }
+
+  async update(
+    id: MarketData['id'],
+    md: MarketData | Partial<MarketData>
+  ): Promise<MarketData | null> {
+    return this.repository.update(id, md) as Promise<MarketData> | null;
   }
 }
