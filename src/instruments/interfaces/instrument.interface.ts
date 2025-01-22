@@ -3,7 +3,7 @@ import { CreateInstrumentDTO } from '../dto/createInstrument.dto';
 import { Instrument } from '../entities/instrument.entity';
 
 export interface IInstrumentrService {
-  findAll(query?: { [key: string]: unknown }): Promise<Instrument[] | null>;
+  find(query?: { [key: string]: unknown }): Promise<Instrument[] | null>;
   findOne: (id: Instrument['id']) => Promise<Instrument | null>;
   findByNameOrTicker: (
     id: Instrument['name'] | Instrument['ticker']

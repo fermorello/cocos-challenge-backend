@@ -6,6 +6,12 @@ import InstrumentsPostgresRepository from '../../instruments/repository/instrume
 import UserPostgresRepository from '../../users/repositories/user.postgres.repository';
 import { UserService } from '../../users/services/user.service';
 
+import OrderPostgresRepository from '../../orders/repositories/order.postgres.repository';
+
+import MarketDataPostgresRepository from '../../marketdata/repositories/marketdata.postgres.repository';
+
+import { PortfolioService } from '../../portfolio/services/portfolio.service';
+
 
 const PrismaClientImp = new PrismaClient();
 
@@ -14,3 +20,13 @@ export const InstrumentServiceImp = new InstrumentService(instrumentRepository);
 
 const userRepository = new UserPostgresRepository(PrismaClientImp);
 export const UserServiceImp = new UserService(userRepository);
+
+const OrderRepositoryImp = new OrderPostgresRepository(PrismaClientImp);
+
+const MarketDataRepositoryImp = new MarketDataPostgresRepository(PrismaClientImp);
+
+export const PortfolioServiceImp = new PortfolioService(
+  OrderRepositoryImp,
+  MarketDataRepositoryImp,
+  InstrumentServiceImp
+);

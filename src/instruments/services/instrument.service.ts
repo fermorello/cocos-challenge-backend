@@ -14,7 +14,7 @@ export class InstrumentService
     super(repository);
   }
 
-  findAll(query?: { [key: string]: unknown }): Promise<Instrument[] | null> {
+  find(query?: { [key: string]: unknown }): Promise<Instrument[] | null> {
     throw new Error('Not implemented');
   }
 

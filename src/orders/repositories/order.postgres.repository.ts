@@ -1,6 +1,6 @@
 import { Order } from '../entities/order.entity';
 import { PrismaClient } from '@prisma/client';
-import { IOrderRepository } from '../interfaces/order.interface';
+import { IOrderRepository, OrderStatus } from '../interfaces/order.interface';
 import { DatabaseError } from '../../shared/errors/app.errors';
 
 export default class OrderPostgresRepository implements IOrderRepository {
@@ -84,6 +84,27 @@ export default class OrderPostgresRepository implements IOrderRepository {
     } catch (e) {
       console.error(e);
       throw new DatabaseError('Error updating order in database');
+    }
+  }
+
+  async findFilledOrdersByUserId(
+    userId: Order['userId']
+  ): Promise<Order[] | null> {
+    try {
+      const orders = await this.prisma.order.findMany({
+        where: {
+          userid: userId,
+          status: OrderStatus.FILLED,
+        },
+      });
+      return orders.map((o) => ({
+        ...o,
+        userId: o.userid,
+        instrumentId: o.instrumentid,
+      }));
+    } catch (e) {
+      console.error(e);
+      throw new DatabaseError('Error retrieving orders from database');
     }
   }
 }
