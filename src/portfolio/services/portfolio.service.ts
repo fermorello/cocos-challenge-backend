@@ -12,6 +12,19 @@ export class PortfolioService implements IPortfolioService {
   ) {}
 
   async getUserPortfolio(userId: number): Promise<Portfolio> {
-    throw new Error('Method not implemented.');
+
+    //TODO: Get all FILLED orders for the user
+
+    //TODO: Use Filled Orders to calculate users avaialble cash balance
+
+    //TODO: Use Filled Orders to calculate users positions
+
+    //TODO: Calculate total value of the portfolio
+
+    return {
+      totalValue: 0,
+      availableCash: 0,
+      positions: [],
+    };
   }
 }
