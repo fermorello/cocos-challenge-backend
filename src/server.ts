@@ -2,6 +2,7 @@ import morgan from 'morgan';
 import express from 'express';
 import { ConfigServer } from './config/config';
 import { ErrorMiddleware } from './shared/middleware/error.middleware';
+import InstrumentRouter from './instruments/router/instrument.routes';
 
 class ServerBootstrap extends ConfigServer {
   public app: express.Application = express();
@@ -19,7 +20,7 @@ class ServerBootstrap extends ConfigServer {
   }
 
   public routers(): Array<express.Router> {
-    return [];
+    return [new InstrumentRouter().router];
   }
 
   public listen(): void {
