@@ -13,10 +13,10 @@ export class InstrumentController {
       return this.httpResponse.NoContent(res);
     }
     try {
-      const portfolio = await this.instrumentService.findByNameOrTicker(
+      const instrument = await this.instrumentService.findByNameOrTicker(
         String(q)
       );
-      return this.httpResponse.Ok(res, portfolio);
+      return this.httpResponse.Ok(res, instrument);
     } catch (e) {
       console.error(e);
       return this.httpResponse.ERROR(res, e);
