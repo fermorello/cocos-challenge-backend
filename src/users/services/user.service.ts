@@ -13,12 +13,23 @@ export class UserService
   }
 
   findAll(query?: { [key: string]: unknown }): Promise<User[] | null> {
-    throw new Error('Method not implemented.');
+    return this.repository.find(query) as Promise<User[] | null>;
   }
-  findOne(id: User['id']): Promise<User | null> {
-    throw new Error('Method not implemented.');
+
+  async findOne(id: User['id']): Promise<User | null> {
+    return this.repository.findOne(id) as Promise<User> | null;
   }
-  create(user: CreateUserDTO): Promise<User | null> {
-    throw new Error('Method not implemented.');
+
+  async create(user: CreateUserDTO): Promise<User | null> {
+    return this.repository.create(
+      user as Partial<User>
+    ) as Promise<User> | null;
+  }
+
+  async update(
+    id: User['id'],
+    User: User | Partial<User>
+  ): Promise<User | null> {
+    return this.repository.update(id, User) as Promise<User> | null;
   }
 }
