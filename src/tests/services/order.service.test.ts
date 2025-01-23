@@ -77,8 +77,53 @@ describe('OrdersService', () => {
         status: OrderStatus.FILLED,
       });
     });
-    //2. CREATE LIMIT SELL TEST
+
+    it('should create a LIMIT SELL order successfully', async () => {
+      const createOrderDto: CreateOrderDTO = {
+        userId: 1,
+        instrumentId: 1,
+        side: OrderSide.SELL,
+        type: OrderType.LIMIT,
+        size: 5,
+        price: 150,
+      };
+
+      marketDataService.getLatestPriceById.mockResolvedValue({
+        instrumentId: 1,
+        close: 100,
+        open: 98,
+      });
+
+      portfolioService.getUserPortfolio.mockResolvedValue({
+        availableCash: 1000,
+        totalValue: 5000,
+        positions: [
+          {
+            instrumentId: 1,
+            quantity: 10,
+            totalValue: 1000,
+            name: 'Test',
+            ticker: 'TST',
+            performance: 0.5,
+          },
+        ],
+      });
+
+      const result = await ordersService.create(createOrderDto);
+
+      expect(result).toMatchObject({
+        userId: createOrderDto.userId,
+        instrumentId: createOrderDto.instrumentId,
+        side: createOrderDto.side,
+        type: createOrderDto.type,
+        size: createOrderDto.size,
+        price: createOrderDto.price,
+        status: OrderStatus.NEW,
+      });
+    });
+    
     //3. REJECT INSUFFICIENT FUNDS
     //4. REJECT INSUFFICIENT POSITION
+
   });
 });
