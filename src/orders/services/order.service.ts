@@ -1,14 +1,14 @@
 import { Order } from '../entities/order.entity';
 import { BaseService } from '../../config/base.service';
 import IRepository from '../../config/repository.interface';
-import { IOrderService } from '../interfaces/order.interface';
+import { IOrderRepository, IOrderService } from '../interfaces/order.interface';
 import { CreateOrderDTO } from '../dto/createOrderDTO';
 
 export class OrderService
-  extends BaseService<Order, IRepository<Order>>
+  extends BaseService<Order, IOrderRepository>
   implements IOrderService
 {
-  constructor(repository: IRepository<Order>) {
+  constructor(repository: IOrderRepository) {
     super(repository);
   }
   findAll(query?: { [key: string]: unknown }): Promise<Order[] | null> {
@@ -19,7 +19,21 @@ export class OrderService
     throw new Error('Method not implemented.');
   }
 
-  create(order: CreateOrderDTO): Promise<Order | null> {
+  create(createOrderDto: CreateOrderDTO): Promise<Order | null> {
+    //TODO: 
+
+    //Add ZOD for DTO validation
+
+    // Validate business rules
+
+    // Get Marketdata price for the instrument
+
+    // Validate User has enough cash to buy the instrument or has enough quantity to sell
+
     throw new Error('Method not implemented.');
+  }
+  
+  findFilledOrdersByUserId(userId: number): Promise<Order[] | null> {
+    return this.repository.findFilledOrdersByUserId(userId);
   }
 }
