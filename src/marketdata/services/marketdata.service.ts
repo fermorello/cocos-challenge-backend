@@ -5,6 +5,7 @@ import {
   IMarketDataRepository,
   IMarketDataService,
 } from '../interfaces/marketdata.interface';
+import { Instrument } from '../../instruments/entities/instrument.entity';
 
 export class MarketDataService
   extends BaseService<MarketData, IMarketDataRepository>
@@ -13,7 +14,6 @@ export class MarketDataService
   constructor(repository: IMarketDataRepository) {
     super(repository);
   }
-
   findAll(query?: { [key: string]: unknown }) {
     return this.repository.find(query) as Promise<MarketData[] | null>;
   }
@@ -33,12 +33,20 @@ export class MarketDataService
     return this.repository.update(id, md) as Promise<MarketData> | null;
   }
 
-  async getLatestPrices(): Promise<Pick<
-    MarketData,
-    'instrumentId' | 'close' | 'open'
-  >[] | null> {
+  async getLatestPrices(): Promise<
+    Pick<MarketData, 'instrumentId' | 'close' | 'open'>[] | null
+  > {
     return this.repository.getLatestPrices() as Promise<
       Pick<MarketData, 'instrumentId' | 'close' | 'open'>[] | null
     >;
+  }
+
+  async getLatestPriceById(
+    instrumentId: Instrument['id']
+  ): Promise<Pick<MarketData, 'instrumentId' | 'close' | 'open'> | null> {
+    return this.repository.getLatestPriceById(instrumentId) as Promise<Pick<
+      MarketData,
+      'instrumentId' | 'close' | 'open'
+    > | null>;
   }
 }

@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { MarketData } from '../entities/marketdata.entity';
 import { DatabaseError } from '../../shared/errors/app.errors';
 import { IMarketDataRepository } from '../interfaces/marketdata.interface';
+import { Instrument } from '../../instruments/entities/instrument.entity';
 
 export default class MarketDataPostgresRepository
   implements IMarketDataRepository
@@ -53,10 +54,9 @@ export default class MarketDataPostgresRepository
     throw new Error();
   }
 
-  async getLatestPrices(): Promise<Pick<
-    MarketData,
-    'instrumentId' | 'close' | 'open'
-  >[] | null> {
+  async getLatestPrices(): Promise<
+    Pick<MarketData, 'instrumentId' | 'close' | 'open'>[] | null
+  > {
     try {
       const latestDate = await this.prisma.marketData.aggregate({
         _max: {
@@ -82,6 +82,45 @@ export default class MarketDataPostgresRepository
     } catch (e) {
       console.error(e);
       throw new DatabaseError('Error retrieving latest prices from database');
+    }
+  }
+
+  async getLatestPriceById(
+    instrumentId: Instrument['id']
+  ): Promise<{ instrumentId: number; close: number; open: number } | null> {
+    try {
+      const latestDate = await this.prisma.marketData.aggregate({
+        where: {
+          instrumentid: Number(instrumentId),
+        },
+        _max: {
+          date: true,
+        },
+      });
+
+      if (!latestDate) {
+        return null;
+      }
+
+      const latestPrice = await this.prisma.marketData.findFirst({
+        where: {
+          instrumentid: Number(instrumentId),
+          date: latestDate._max.date as Date,
+        },
+      });
+
+      if (!latestPrice) {
+        return null;
+      }
+
+      return {
+        instrumentId: latestPrice.instrumentid,
+        open: latestPrice.open,
+        close: latestPrice.close,
+      };
+    } catch (e) {
+      console.error(e);
+      throw new DatabaseError('Error retrieving latest price from database');
     }
   }
 }
