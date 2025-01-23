@@ -1,6 +1,7 @@
 import { Order } from '../entities/order.entity';
 import { CreateOrderDTO } from '../dto/createOrder.dto';
 import IRepository from '../../config/repository.interface';
+import { CancelOrderDTO } from '../dto/cancelOrder.dto';
 
 export interface IOrderRepository extends IRepository<Order> {
   findFilledOrdersByUserId(userId: number): Promise<Order[] | null>;
@@ -16,6 +17,7 @@ export interface IOrderService {
   findOne: (id: Order['id']) => Promise<Order | null>;
   create: (order: CreateOrderDTO) => Promise<Order | null>;
   findFilledOrdersByUserId(userId: number): Promise<Order[] | null>;
+  cancel: (order: CancelOrderDTO) => Promise<Order | null>;
 }
 
 export enum OrderSide {
