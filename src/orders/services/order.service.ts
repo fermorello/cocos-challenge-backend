@@ -1,9 +1,14 @@
 import { Order } from '../entities/order.entity';
 import { BaseService } from '../../config/base.service';
-import IRepository from '../../config/repository.interface';
-import { IOrderRepository, IOrderService, OrderType } from '../interfaces/order.interface';
 import { CreateOrderDTO } from '../dto/createOrder.dto';
+import { PortfolioService } from '../../portfolio/services/portfolio.service';
 import { MarketDataService } from '../../marketdata/services/marketdata.service';
+import {
+  IOrderRepository,
+  IOrderService,
+  OrderSide,
+  OrderType,
+} from '../interfaces/order.interface';
 
 export class OrderService
   extends BaseService<Order, IOrderRepository>
@@ -11,7 +16,8 @@ export class OrderService
 {
   constructor(
     repository: IOrderRepository,
-    private marketDataService: MarketDataService
+    private marketDataService: MarketDataService,
+    private portfolioService: PortfolioService
   ) {
     super(repository);
   }
@@ -57,13 +63,43 @@ export class OrderService
       throw new Error('Price is required for LIMIT orders');
     }
 
-
-    // Validate User has enough cash to buy the instrument or has enough quantity to sell
+    await this.validateOrderAvailability(userId, {
+      side,
+      instrumentId,
+      size: orderSize,
+      price: type === OrderType.MARKET ? latestPrice.close : price!,
+    });
 
     return createOrderDto;
   }
 
   findFilledOrdersByUserId(userId: number): Promise<Order[] | null> {
     return this.repository.findFilledOrdersByUserId(userId);
+  }
+
+  private async validateOrderAvailability(
+    userId: number,
+    order: {
+      side: OrderSide;
+      instrumentId: number;
+      size: number;
+      price: number;
+    }
+  ): Promise<void> {
+    const portfolio = await this.portfolioService.getUserPortfolio(userId);
+
+    if (order.side === OrderSide.BUY) {
+      const orderCost = order.size * order.price;
+      if (orderCost > portfolio.availableCash) {
+        throw new Error('Insufficient funds');
+      }
+    } else if (order.side === OrderSide.SELL) {
+      const position = portfolio.positions.find(
+        (p) => p.instrumentId === order.instrumentId
+      );
+      if (!position || position.quantity < order.size) {
+        throw new Error('Insufficient shares');
+      }
+    }
   }
 }

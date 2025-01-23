@@ -30,13 +30,15 @@ export const MarketDataServiceImp = new MarketDataService(
 );
 
 const OrderRepositoryImp = new OrderPostgresRepository(PrismaClientImp);
-export const OrderServiceImp = new OrderService(
-  OrderRepositoryImp,
-  MarketDataServiceImp
-);
 
 export const PortfolioServiceImp = new PortfolioService(
   OrderRepositoryImp,
   MarketDataRepositoryImp,
   InstrumentServiceImp
+);
+
+export const OrderServiceImp = new OrderService(
+  OrderRepositoryImp,
+  MarketDataServiceImp,
+  PortfolioServiceImp
 );
