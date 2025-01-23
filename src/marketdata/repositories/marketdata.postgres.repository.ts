@@ -52,4 +52,36 @@ export default class MarketDataPostgresRepository
   update(id: string, entity: MarketData): Promise<MarketData | null> {
     throw new Error();
   }
+
+  async getLatestPrices(): Promise<Pick<
+    MarketData,
+    'instrumentId' | 'close' | 'open'
+  >[] | null> {
+    try {
+      const latestDate = await this.prisma.marketData.aggregate({
+        _max: {
+          date: true,
+        },
+      });
+
+      if (!latestDate) {
+        return null;
+      }
+
+      const latestPrices = await this.prisma.marketData.findMany({
+        where: {
+          date: latestDate._max.date as Date,
+        },
+      });
+
+      return latestPrices.map((lp) => ({
+        instrumentId: lp.instrumentid,
+        open: lp.open,
+        close: lp.close,
+      }));
+    } catch (e) {
+      console.error(e);
+      throw new DatabaseError('Error retrieving latest prices from database');
+    }
+  }
 }

@@ -32,4 +32,13 @@ export class MarketDataService
   ): Promise<MarketData | null> {
     return this.repository.update(id, md) as Promise<MarketData> | null;
   }
+
+  async getLatestPrices(): Promise<Pick<
+    MarketData,
+    'instrumentId' | 'close' | 'open'
+  >[] | null> {
+    return this.repository.getLatestPrices() as Promise<
+      Pick<MarketData, 'instrumentId' | 'close' | 'open'>[] | null
+    >;
+  }
 }

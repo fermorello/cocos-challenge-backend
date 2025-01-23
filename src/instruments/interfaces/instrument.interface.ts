@@ -16,3 +16,8 @@ export interface IInstrumentRepository extends IRepository<Instrument> {
     text: Instrument['name'] | Instrument['ticker']
   ) => Promise<Instrument[] | null>;
 }
+
+export enum InstrumentType {
+  ACCION = 'ACCION',
+  MONEDA = 'MONEDA',
+}
