@@ -1,7 +1,7 @@
 import { Order } from '../entities/order.entity';
 import { BaseService } from '../../config/base.service';
 import IRepository from '../../config/repository.interface';
-import { IOrderRepository, IOrderService } from '../interfaces/order.interface';
+import { IOrderRepository, IOrderService, OrderType } from '../interfaces/order.interface';
 import { CreateOrderDTO } from '../dto/createOrder.dto';
 import { MarketDataService } from '../../marketdata/services/marketdata.service';
 
@@ -40,9 +40,23 @@ export class OrderService
       throw new Error('Either size or amount must be provided');
     }
 
-    // Validate business rules
+    let orderSize: number = 0;
 
-    // Get Marketdata price for the instrument
+    if (size) {
+      orderSize = size;
+    }
+
+    if (amount && !size) {
+      orderSize = Math.floor(amount / latestPrice.close);
+      if (orderSize === 0) {
+        throw new Error('Amount too small to buy at least one share');
+      }
+    }
+
+    if (type === OrderType.LIMIT && !price) {
+      throw new Error('Price is required for LIMIT orders');
+    }
+
 
     // Validate User has enough cash to buy the instrument or has enough quantity to sell
 
