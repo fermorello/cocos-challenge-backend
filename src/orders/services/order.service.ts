@@ -2,7 +2,7 @@ import { Order } from '../entities/order.entity';
 import { BaseService } from '../../config/base.service';
 import IRepository from '../../config/repository.interface';
 import { IOrderRepository, IOrderService } from '../interfaces/order.interface';
-import { CreateOrderDTO } from '../dto/createOrderDTO';
+import { CreateOrderDTO } from '../dto/createOrder.dto';
 
 export class OrderService
   extends BaseService<Order, IOrderRepository>
@@ -20,7 +20,7 @@ export class OrderService
   }
 
   create(createOrderDto: CreateOrderDTO): Promise<Order | null> {
-    //TODO: 
+    //TODO:
 
     //Add ZOD for DTO validation
 
@@ -30,9 +30,9 @@ export class OrderService
 
     // Validate User has enough cash to buy the instrument or has enough quantity to sell
 
-    throw new Error('Method not implemented.');
+    return createOrderDto;
   }
-  
+
   findFilledOrdersByUserId(userId: number): Promise<Order[] | null> {
     return this.repository.findFilledOrdersByUserId(userId);
   }

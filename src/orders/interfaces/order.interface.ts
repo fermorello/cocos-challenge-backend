@@ -1,5 +1,5 @@
 import { Order } from '../entities/order.entity';
-import { CreateOrderDTO } from '../dto/createOrderDTO';
+import { CreateOrderDTO } from '../dto/createOrder.dto';
 import IRepository from '../../config/repository.interface';
 
 export interface IOrderRepository extends IRepository<Order> {

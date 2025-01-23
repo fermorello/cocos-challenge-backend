@@ -4,6 +4,7 @@ import { ConfigServer } from './config/config';
 import { ErrorMiddleware } from './shared/middleware/error.middleware';
 import InstrumentRouter from './instruments/router/instrument.routes';
 import UserRouter from './users/router/user.routes';
+import OrderRouter from './orders/router/order.routes';
 
 class ServerBootstrap extends ConfigServer {
   public app: express.Application = express();
@@ -21,7 +22,11 @@ class ServerBootstrap extends ConfigServer {
   }
 
   public routers(): Array<express.Router> {
-    return [new InstrumentRouter().router, new UserRouter().router];
+    return [
+      new InstrumentRouter().router,
+      new UserRouter().router,
+      new OrderRouter().router,
+    ];
   }
 
   public listen(): void {
