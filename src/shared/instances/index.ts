@@ -12,6 +12,7 @@ import MarketDataPostgresRepository from '../../marketdata/repositories/marketda
 
 import { PortfolioService } from '../../portfolio/services/portfolio.service';
 import { OrderService } from '../../orders/services/order.service';
+import { MarketDataService } from '../../marketdata/services/marketdata.service';
 
 const PrismaClientImp = new PrismaClient();
 
@@ -21,11 +22,17 @@ export const InstrumentServiceImp = new InstrumentService(instrumentRepository);
 const userRepository = new UserPostgresRepository(PrismaClientImp);
 export const UserServiceImp = new UserService(userRepository);
 
-const OrderRepositoryImp = new OrderPostgresRepository(PrismaClientImp);
-export const OrderServiceImp = new OrderService(OrderRepositoryImp);
-
 const MarketDataRepositoryImp = new MarketDataPostgresRepository(
   PrismaClientImp
+);
+export const MarketDataServiceImp = new MarketDataService(
+  MarketDataRepositoryImp
+);
+
+const OrderRepositoryImp = new OrderPostgresRepository(PrismaClientImp);
+export const OrderServiceImp = new OrderService(
+  OrderRepositoryImp,
+  MarketDataServiceImp
 );
 
 export const PortfolioServiceImp = new PortfolioService(
