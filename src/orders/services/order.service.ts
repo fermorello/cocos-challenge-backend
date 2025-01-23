@@ -7,6 +7,7 @@ import {
   IOrderRepository,
   IOrderService,
   OrderSide,
+  OrderStatus,
   OrderType,
 } from '../interfaces/order.interface';
 
@@ -70,7 +71,18 @@ export class OrderService
       price: type === OrderType.MARKET ? latestPrice.close : price!,
     });
 
-    return createOrderDto;
+    const order = await this.repository.create({
+      userId,
+      instrumentId,
+      side,
+      type,
+      size: orderSize,
+      price: type === OrderType.MARKET ? latestPrice.close : price,
+      status: type === OrderType.MARKET ? OrderStatus.FILLED : OrderStatus.NEW,
+      date: new Date(),
+    });
+
+    return order;
   }
 
   findFilledOrdersByUserId(userId: number): Promise<Order[] | null> {

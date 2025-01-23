@@ -11,8 +11,6 @@ export class OrderController {
   async putNewOrder(req: Request, res: Response) {
     const newOrder: CreateOrderDTO = req.body;
 
-    console.log('newOrder', newOrder);
-
     if (!newOrder) {
       return this.httpResponse.NoContent(res);
     }
