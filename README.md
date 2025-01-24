@@ -75,7 +75,7 @@ tsconfig.json
 
 ```
 git clone https://github.com/fermorello/cocos-challenge-backend.git
-cd be-cocos
+cd cocos-challenge-backend
 ```
 
 2. Install the dependencies:
