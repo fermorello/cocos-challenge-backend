@@ -1,3 +1,205 @@
+# Cocos Challenge Backend
+
+### Summary
+This project is an API that allows obtaining information about user portfolios, searching for assets, and sending orders to the market. The API supports MARKET and LIMIT buy and sell orders.
+
+### Project Structure
+
+```
+.env
+.gitignore
+docker-compose.yml
+dockerfile
+jest.config.js
+package.json
+prisma/
+  schema.prisma
+README.md
+routes.postman_collection.json
+src/
+  config/
+    base.entity.ts
+    base.router.ts
+    base.service.ts
+    config.ts
+    repository.interface.ts
+  instruments/
+    controller/
+    dto/
+    entities/
+    interfaces/
+    repository/
+    router/
+    services/
+  marketdata/
+    controllers/
+    dto/
+    entities/
+    interfaces/
+    repositories/
+    services/
+  orders/
+    controller/
+    dto/
+    entities/
+    interfaces/
+    repositories/
+    router/
+    services/
+  portfolio/
+    interfaces/
+    services/
+    utils/
+  server.ts
+  shared/
+    errors/
+    instances/
+    middleware/
+    response/
+  tests/
+    services/
+  users/
+    controller/
+    dto/
+    entities/
+    interfaces/
+    repositories/
+    router/
+    services/
+tsconfig.json
+```
+
+## Installation
+
+1. Clone the repository:
+
+```
+git clone https://github.com/fermorello/cocos-challenge-backend.git
+cd be-cocos
+```
+
+2. Install the dependencies:
+
+```
+npm install
+```
+
+3. Configure the environment variables in the .env file
+
+```
+PORT=
+DATABASE_URL=
+```
+
+4. Generate the Prisma client:
+
+```
+npx prisma generate
+```
+
+## Usage
+
+### Development
+To start the server in development mode:
+
+```
+npx run dev
+```
+
+### Production
+To build and run the server in production:
+
+```
+npm run build
+npm start
+```
+
+### Docker
+To run the project using Docker:
+
+```
+docker-compose up --build
+```
+
+## Endpoints
+
+- Portfolio
+  - **GET /api/users/portfolio?userId=1**
+    - Retrieves the portfolio of a user.
+- Instruments
+  - **GET /api/instrument/search?q=TECO**
+    - Searches for instruments by name or ticker.
+- Orders
+  - **POST /api/orders**
+    - Sends a new order to the market
+    - Body:
+      ```
+      {
+        "instrumentId": 54,
+        "userId": 1,
+        "side": "BUY",
+        "type": "LIMIT",
+        "size": 1,
+        "price": 150
+      }
+      ```
+  - **DELETE /api/orders**
+    - Cancels an order with status "NEW"
+    - Body:
+      ```
+      {
+          "userId": 1,
+          "orderId": 12
+      }
+      ```
+
+## Tests
+To run the tests:
+```
+npm test
+```
+
+## Folder Structure
+
+config/: Base project configuration.
+instruments/: Instruments module.
+marketdata/: Market data module.
+orders/: Orders module.
+portfolio/: Portfolio module.
+shared/: Shared code between modules.
+tests/: Project tests.
+users/: Users module.
+
+## Database
+The database schema is located in "schema.prisma".
+
+## Considerations
+
+### Functional Considerations
+Asset prices are in pesos.
+MARKET orders are executed immediately.
+LIMIT orders are created with status NEW.
+Only orders with status NEW can be canceled.
+Transfers are modeled as orders with side CASH_IN or CASH_OUT.
+
+### Technical Considerations
+The API is developed with Node.js and Express.
+Prisma is used as ORM.
+Data is validated with Zod.
+Errors are handled with Express middlewares.
+
+## Improvement Considerations
+
+1. Authentication and Authorization
+2. Data Caching
+3. Order Service Scalability
+4. Parallel Processing with Queues
+5. Monitoring and Logging
+
+## Postman Collection
+The Postman collection is located in routes.postman_collection.json.
+
+
 # Cocos Challange Backend
 
 ### Resumen
