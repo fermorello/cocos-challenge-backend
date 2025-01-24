@@ -121,9 +121,66 @@ describe('OrdersService', () => {
         status: OrderStatus.NEW,
       });
     });
-    
-    //3. REJECT INSUFFICIENT FUNDS
-    //4. REJECT INSUFFICIENT POSITION
 
+    it('should reject order when insufficient funds', async () => {
+      const userId = 1;
+      const createOrderDto: CreateOrderDTO = {
+        userId: 1,
+        instrumentId: 1,
+        side: OrderSide.BUY,
+        type: OrderType.MARKET,
+        size: 10,
+      };
+
+      const latestPrice = [{ instrumentId: 1, close: 100, open: 98 }];
+      marketDataService.getLatestPrices.mockResolvedValue(latestPrice);
+
+      marketDataService.getLatestPriceById.mockResolvedValue(latestPrice[0]);
+
+      portfolioService.getUserPortfolio.mockResolvedValue({
+        availableCash: 500, 
+        totalValue: 500,
+        positions: [],
+      });
+
+      await expect(ordersService.create(createOrderDto)).rejects.toThrow(
+        'Insufficient funds'
+      );
+    });
+
+    it('should reject order when insufficient shares for selling', async () => {
+      const userId = 1;
+      const createOrderDto: CreateOrderDTO = {
+        userId: 1,
+        instrumentId: 1,
+        side: OrderSide.SELL,
+        type: OrderType.MARKET,
+        size: 10,
+      };
+
+      const latestPrice = [{ instrumentId: 1, close: 100, open: 98 }];
+
+      marketDataService.getLatestPrices.mockResolvedValue(latestPrice);
+      marketDataService.getLatestPriceById.mockResolvedValue(latestPrice[0]);
+
+      portfolioService.getUserPortfolio.mockResolvedValue({
+        availableCash: 1000,
+        totalValue: 2000,
+        positions: [
+          {
+            instrumentId: 1,
+            quantity: 5,
+            totalValue: 1000,
+            name: 'Test',
+            ticker: 'TST',
+            performance: 0.5,
+          },
+        ],
+      });
+
+      await expect(ordersService.create(createOrderDto)).rejects.toThrow(
+        'Insufficient shares'
+      );
+    });
   });
 });
