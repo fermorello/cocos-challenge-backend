@@ -138,7 +138,7 @@ describe('OrdersService', () => {
       marketDataService.getLatestPriceById.mockResolvedValue(latestPrice[0]);
 
       portfolioService.getUserPortfolio.mockResolvedValue({
-        availableCash: 500, 
+        availableCash: 500,
         totalValue: 500,
         positions: [],
       });
@@ -182,5 +182,33 @@ describe('OrdersService', () => {
         'Insufficient shares'
       );
     });
+  });
+  
+  it('should calculate correct size when amount is provided', async () => {
+    const createOrderDto: CreateOrderDTO = {
+      userId: 1,
+      instrumentId: 1,
+      side: OrderSide.BUY,
+      type: OrderType.MARKET,
+      amount: 1000,
+    };
+
+    const latestPrice = [{ instrumentId: 1, close: 60, open: 62 }];
+
+    marketDataService.getLatestPrices.mockResolvedValue(latestPrice);
+    marketDataService.getLatestPriceById.mockResolvedValue(latestPrice[0]);
+
+    portfolioService.getUserPortfolio.mockResolvedValue({
+      availableCash: 2000,
+      totalValue: 2000,
+      positions: [],
+    });
+
+    const result = await ordersService.create(createOrderDto);
+
+    if (result) {
+      expect(result.size).toBe(16); 
+      expect(result.status).toBe(OrderStatus.FILLED);
+    }
   });
 });
