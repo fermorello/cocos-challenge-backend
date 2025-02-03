@@ -4,6 +4,8 @@ import { CreateOrderDTO } from '../dto/createOrder.dto';
 import { PortfolioService } from '../../portfolio/services/portfolio.service';
 import { MarketDataService } from '../../marketdata/services/marketdata.service';
 import {
+  CASH_ID,
+  CASH_PRICE,
   IOrderRepository,
   IOrderService,
   OrderSide,
@@ -36,14 +38,6 @@ export class OrderService
     const { instrumentId, side, type, size, price, amount, userId } =
       createOrderDto;
 
-    const latestPrice = await this.marketDataService.getLatestPriceById(
-      instrumentId
-    );
-
-    if (!latestPrice) {
-      throw new Error('No market data available for this instrument');
-    }
-
     if (!size && !amount) {
       throw new Error('Either size or amount must be provided');
     }
@@ -52,6 +46,29 @@ export class OrderService
 
     if (size) {
       orderSize = size;
+    }
+
+    if (side === OrderSide.CASH_IN || side === OrderSide.CASH_OUT) {
+      const order = await this.repository.create({
+        userId,
+        instrumentId: CASH_ID,
+        side,
+        type,
+        size: orderSize,
+        price: CASH_PRICE,
+        status: OrderStatus.FILLED,
+        date: new Date(),
+      });
+
+      return order;
+    }
+
+    const latestPrice = await this.marketDataService.getLatestPriceById(
+      instrumentId
+    );
+
+    if (!latestPrice) {
+      throw new Error('No market data available for this instrument');
     }
 
     if (amount && !size) {

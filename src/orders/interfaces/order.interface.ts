@@ -38,3 +38,6 @@ export enum OrderStatus {
   REJECTED = 'REJECTED',
   CANCELLED = 'CANCELLED'
 }
+
+export const CASH_ID = 66;
+export const CASH_PRICE = 1;
